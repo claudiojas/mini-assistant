@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",  // comum para Node.js
+    "moduleResolution": "node",  // padrão mais compatível
+    "isolatedModules": false,    // não precisa true agora
+    "target": "ES2019",           // ou ES2020
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
