@@ -1,9 +1,16 @@
 // src/server.ts
 import express, { Request, Response } from 'express';
 import { orchestrateTask } from './orchestrator/orchestrator';
+import cors from 'cors';
+
 
 const app = express();
 const port = 3000;
+
+app.use(cors({
+  origin: 'http://localhost:8080',
+  credentials: true 
+}));
 
 // Middleware para entender JSON
 app.use(express.json());
