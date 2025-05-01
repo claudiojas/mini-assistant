@@ -25,8 +25,6 @@ export const orchestrateTask = async (task: string ) => {
   // A primeira parte pode ser onde você analisa o tipo de tarefa.
   const type = await classifyTask(task);
 
-  console.log(type)
-
   // Obtenha o agente a ser utilizado com base no tipo
   const agent = agentMap[type as keyof typeof agentMap];
 
