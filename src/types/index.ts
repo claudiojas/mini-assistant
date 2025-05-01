@@ -9,15 +9,19 @@ type GroqChoice = {
   }
   
 export interface IGroqResponse {
-id: string;
-object: string;
-created: number;
-model: string;
-choices: GroqChoice[];
-usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: GroqChoice[];
+  usage: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+  };
 };
+
+export interface ChatEntry {
+  question: string;
+  answer: string;
 }
-  

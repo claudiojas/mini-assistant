@@ -1,17 +1,18 @@
 import fetch from 'node-fetch';
+import { ChatEntry } from '../types';
 
 const historyText = `
     Resumo profissional: Você tem experiência em desenvolvimento web, integração de sistemas, 
     otimização de performance, acessibilidade, segurança, automação de pipelines CI/CD e liderança técnica de equipes.
-    Começou sua historia na programação no final de 2021 em aulas ministradas pro um professor da UFMA aos sabados, logo depois
-    em 2022 ingrassou na Cubos Academy onde estudou por 8 meses em um curso intensivo de desenvolvimento fullstack, em 2023 ingrassou
+    Começou sua historia na programação no final de 2021 em aulas ministradas por um professor da UFMA aos sábados, logo depois
+    em 2022 ingressou na Cubos Academy onde estudou por 8 meses em um curso intensivo de desenvolvimento fullstack, em 2023 ingressou
     na Alura pra mais uma jornada de aprendizado, desta vez foram 6 meses focado em frontend. Em 2024 trabalhou como Tech Lead e Desenvolvedor Frontend na Lacrei Saúde, 
-    liderando sprints, orientando o time e audando melhorar as plataformas o design system em varios processos. Também atua como voluntário no Instituto Mãos Unidas, 
+    liderando sprints, orientando o time e ajudando a melhorar as plataformas e o design system em vários processos. Também atua como voluntário no Instituto Mãos Unidas, 
     desenvolvendo uma plataforma de e-commerce em Next.js, React e Tailwind. Atualmente, está estudando Análise e Desenvolvimento de Sistemas pela Universidade Estadual do Maranhão (UEMA),
     AWS, arquitetura escalável e OutSystems Reactive para ampliar suas capacidades em projetos low-code. Tem experiência prática com React, Next.js, Node.js, Docker, Prisma, Storybook, 
     PostgreSQL, MongoDB, e segurança usando JWT.
 
-    Projetos pessoais: Pretende criar uma plataforma Digital para compartilhar conhecimentos de padrões de desenvolvimento esse é um projeto que vira para o futuro; 
+    Projetos pessoais: Pretende criar uma plataforma Digital para compartilhar conhecimentos de padrões de desenvolvimento; 
     desenvolveu sistema de monitoramento de consumo de água e gás com IA, e um aplicativo de geolocalização usando Google Maps API.
 
     Habilidades: Liderança técnica, colaboração em equipe, inovação, resolução de problemas e boa comunicação.
@@ -22,10 +23,16 @@ const historyText = `
     Não seja formal demais, nem responda com textos muito longos. Foque em dar respostas objetivas, simpáticas e que passem credibilidade.
 `;
 
-export async function historyAgent(task: string) {
+export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
+  // Formatar o histórico recente para incluir no prompt
+  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
+    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
+  }).join("\n");
 
   const prompt = `
     Informações adicionais: ${historyText}
+    Contexto recente:
+    ${recentQuestionsAndAnswers}
     Tarefa: "${task}"
   `;
 

@@ -1,18 +1,21 @@
-import fetch from 'node-fetch';
-
-export const classifyTask = async (task: string): Promise<'history' | 'services' | 'projects' | unknown> => {
-
+export const classifyTask = async (task: string): Promise<
+  'history' | 'services' | 'projects' | 'memory' | 'smalltalk' | 'tech' | 'pricing' | 'other'
+> => {
   const prompt = `
     Classifique a seguinte tarefa em uma das seguintes categorias:
-    - history
-    - services
-    - projects
+    - history (trajetória ou histórico profissional)
+    - services (o que você oferece ou como trabalha)
+    - projects (projetos realizados)
+    - memory (perguntas pessoais ou de contexto)
+    - smalltalk (cumprimentos ou conversa informal)
+    - tech (dúvidas sobre tecnologias ou stacks)
+    - pricing (perguntas sobre preço ou orçamento)
+    - other (se não se encaixar em nenhuma das anteriores)
 
-    Apenas responda com uma palavra: history, services ou projects ou other.
+    Apenas responda com uma palavra.
     
     Tarefa: "${task}"
   `;
-
 
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
@@ -31,12 +34,11 @@ export const classifyTask = async (task: string): Promise<'history' | 'services'
         ]
       })
     });
-    
+
     const data = await response.json();
-    
-    return data.choices[0].message.content.trim();
-  } catch (error: any) {
-    console.log("entrou no erro")
-    return console.log(error)
+    return data.choices?.[0]?.message?.content.trim() || 'other';
+  } catch (error) {
+    console.error("Erro no classificador:", error);
+    return 'other';
   }
 };

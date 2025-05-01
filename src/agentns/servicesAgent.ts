@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { ChatEntry } from '../types';
 
 const historyText = `
     Você desenvolve sites, plataformas web e aplicações customizadas, usando tecnologias como React, Next.js, TypeScript, Node.js, Tailwind CSS e outras tecnologias modernas.
@@ -18,15 +19,21 @@ const historyText = `
     Importante: Responda sempre de forma simpática, natural e direta, sem textos longos ou respostas muito formais. Demonstre segurança, proximidade e flexibilidade.
 `;
 
-const contentMessege = `
+const contentMessage = `
     Você é Cláudio José Araújo Soares, desenvolvedor frontend e fullstack do Brasil. 
     Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
-`
+`;
 
-export async function servicesAgent(task: string) {
+export async function servicesAgent(task: string, recentHistory: ChatEntry[]) {
+  // Formatar o histórico recente para incluir no prompt
+  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
+    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
+  }).join("\n");
 
   const prompt = `
-    Quando perguntarem sobre os serviços que você oferece ou como você trabalha, use essas informações como base para sua resposta:${historyText}
+    Quando perguntarem sobre os serviços que você oferece ou como você trabalha, use essas informações como base para sua resposta: ${historyText}
+    Contexto recente:
+    ${recentQuestionsAndAnswers}
     Tarefa: "${task}"
   `;
 
@@ -42,7 +49,7 @@ export async function servicesAgent(task: string) {
         messages: [
           {
             role: 'system',
-            content: contentMessege
+            content: contentMessage
           },
           {
             role: 'user',
