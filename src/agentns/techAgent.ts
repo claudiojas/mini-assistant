@@ -15,7 +15,10 @@ export async function techAgent(task: string, recentHistory: ChatEntry[]) {
 
   const prompt = `
     A pessoa está perguntando sobre tecnologias que você usa, recomenda ou prefere para desenvolvimento web.
-    Responda com segurança, de forma informal, falando das stacks modernas que costuma usar, como React, Next.js, TypeScript, Node.js, Tailwind e boas práticas em performance, acessibilidade e segurança.
+    Responda com segurança, de forma informal, falando das stacks modernas que costuma usar, como React, Next.js, 
+    TypeScript, Node.js, Tailwind e boas práticas em performance, acessibilidade e segurança.
+
+    Use respostas curtas, então seja educado e objetivo nas respostas
 
     Tarefa: "${task}"
 

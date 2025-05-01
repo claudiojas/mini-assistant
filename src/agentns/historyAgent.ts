@@ -30,6 +30,7 @@ export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
   }).join("\n");
 
   const prompt = `
+    Use respostas curtas, então seja educado e objetivo nas respostas
     Informações adicionais: ${historyText}
     Contexto recente:
     ${recentQuestionsAndAnswers}

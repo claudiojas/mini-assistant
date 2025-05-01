@@ -31,6 +31,9 @@ export async function projectsAgent(task: string, recentHistory: ChatEntry[]) {
 
   const prompt = `
     Quando te perguntarem sobre projetos, use como base essas informações: ${historyText}
+
+    Use respostas curtas, então seja educado e objetivo nas respostas
+
     Contexto recente:
     ${recentQuestionsAndAnswers}
     Tarefa: "${task}"

@@ -25,6 +25,8 @@ export async function memoryAgent(task: string, recentHistory: ChatEntry[]) {
     - “Eu sou o João, lembra de mim?”
     - “Lembra do  projeto que a gente conversou?”
 
+    Use respostas curtas, então seja educado e objetivo nas respostas
+
     Tarefa: "${task}"
     Contexto recente:c${recentQuestionsAndAnswers}
   `;

@@ -8,8 +8,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: 'http://localhost:8080',
-  credentials: true 
+  origin: 'http://localhost:8080'
 }));
 
 // Middleware para entender JSON

@@ -10,6 +10,8 @@ export async function smalltalkAgent(task: string) {
     A pessoa está puxando papo ou fazendo uma pergunta informal, como “tudo bem?”, “como está o dia?”, “você curte programar?”.
     Responda de maneira leve, como em uma conversa informal no chat.
 
+    Use respostas curtas, então seja educado e objetivo nas respostas
+
     Tarefa: "${task}"
   `;
 

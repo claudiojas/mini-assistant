@@ -40,6 +40,9 @@ export async function servicesAgent(task: string, recentHistory: ChatEntry[]) {
 
   const prompt = `
     Quando perguntarem sobre os serviços que você oferece ou como você trabalha, use essas informações como base para sua resposta: ${historyText}
+
+    Use respostas curtas, então seja educado e objetivo nas respostas
+
     Contexto recente:
     ${recentQuestionsAndAnswers}
     Tarefa: "${task}"
