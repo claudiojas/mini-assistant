@@ -10,7 +10,6 @@ app.use(express.json());
 
 // Rota principal para orquestrar tarefas
 app.post('/task', async (req: Request, res: Response) => {
-  console.log("esta chamando minha rota post")
   const task = req.body.task;
   if (!task) {
     res.status(400).send({ error: 'Task is required!' });

@@ -16,6 +16,7 @@ export async function pricingAgent(task: string, recentHistory: ChatEntry[]) {
   const prompt = `
     A pessoa está perguntando sobre valores, orçamentos, formas de cobrança ou pagamento.
     Explique que você trabalha com projeto fechado ou por hora (quando for o caso), com entrada e finalização, e pode negociar conforme o projeto.
+    Os valores poderão ser pagos por transferencia bancaria ou pix.
 
     Tarefa: "${task}"
 
