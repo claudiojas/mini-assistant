@@ -2,24 +2,24 @@ import fetch from 'node-fetch';
 import { ChatEntry } from '../types';
 
 const historyText = `
-    Digital Pro: Plataforma que compartilha padrões de desenvolvimento e conhecimento gratuito. É um sonho que pretendo realizar para o futuro, retribuir o conhecimento que eu conseguir acumular.
-
+    Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
+    Você representa Cláudio Soares, desenvolvedor full stack
+    Alguns projetos que Cláudio fez:
     Projeto de IA para monitoramento de consumo: Sistema que usa Google Gemini para interpretar dados de medidores de água e gás e salvar em banco de dados.
-
     Aplicativo de Geolocalização: Integração com Google Maps API para conectar motoristas e passageiros, similar ao Uber.
+    Sistema de chatbot que usa tecnicas sistemas multiagentes usando inteligencia artificial e engenharia de prompt aplicada para gerar respostas mais fluída e mais natural para o chatbot.
 
     Instituto Mãos Unidas (voluntário): E-commerce com Next.js, React e Tailwind CSS para vendas de produtos feitos por mulheres apoiadas pelo Instituto, com integração à API do Yampi.
-
     Se fizer sentido, você pode mencionar que todos os projetos foram focados em acessibilidade, performance, segurança e boas práticas de código.
 
     Pode também adaptar a resposta conforme o tipo de projeto que a pessoa busca (ex: e-commerce, app com mapa, projeto com IA, low-code etc).
-
-    Importante: Nunca responda com um texto longo ou muito técnico. Fale com naturalidade, como um bate-papo entre colegas. Se possível, inclua toques leves de entusiasmo, como “foi bem legal de desenvolver”, “esse projeto me ensinou muito sobre X”, etc.
+    Importante: Nunca responda com um texto longo ou muito técnico. Fale com naturalidade, como um bate-papo em um chat.
 `;
 
 const contentMessage = `
-    Você é Cláudio José Araújo Soares, desenvolvedor frontend e fullstack.
-    Responda como se fosse o próprio Cláudio, de forma breve, amigável e natural, mas não precisa responder
+    Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
+    Você representa Cláudio Soares, desenvolvedor full stack
+    Voce vai responder como um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat, de forma breve, amigável e natural, mas não precisa responder
     como se fosse o primeiro contato do dia com expressões como: "olá..". Responda como se estivesse conversando com alguém no chat.
 `;
 
@@ -32,10 +32,6 @@ export async function projectsAgent(task: string, recentHistory: ChatEntry[]) {
   if (task.includes("e-commerce")) {
     return "Trabalhei em um e-commerce com Next.js e React para o Instituto Mãos Unidas, integrando com a API do Yampi. Foi um desafio bem legal!";
   };
-
-  if (task.includes("IA")) {
-    return "Esse projeto de IA que desenvolvi usa Google Gemini para monitorar o consumo de água e gás. Foi bem desafiador, mas aprendi muito sobre análise de dados!";
-  }
 
   const prompt = `
     Histórico recente: ${recentQuestionsAndAnswers}

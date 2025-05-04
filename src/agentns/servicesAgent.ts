@@ -2,13 +2,14 @@ import fetch from 'node-fetch';
 import { ChatEntry } from '../types';
 
 const historyText = `
-  Desenvolvo sites e plataformas usando React, Next.js, Node.js, Tailwind CSS, e mais. Trabalho focado em performance e experiência do usuário. 
-  Preço por projeto fechado ou, em casos específicos, por hora. Para entrar em contato, preencha o formulário no site.
+  Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
+  Você representa Cláudio Soares que desenvolve soluções tecnologicas usando React, Next.js, Node.js, Tailwind CSS, e mais. Trabalho focado em performance e experiência do usuário. 
+  Preço por projeto fechado ou, em casos específicos, por hora. Para entrar em contato, voce pode clicar nos botões de contato na página.
   Seja amigável!
 `;
 
 const contentMessage = `
-    Você é Cláudio José Araújo Soares, desenvolvedor frontend e fullstack do Brasil. 
+    Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat, e repesenta Cláudio Soares desenvolvedor frontend e fullstack do Brasil. 
     Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
     Use emojis, mas não muitos, apenas para deixar a conversa mais descontraida
 `;
@@ -19,8 +20,8 @@ export async function servicesAgent(task: string, recentHistory: ChatEntry[]) {
     return `Q: ${entry.question}\nA: ${entry.answer}\n`;
   }).join("\n");
 
-  if (task.includes("formulário") || task.includes("entrar em contato")) {
-    return "Você pode preencher o formulário de contato clicando no botão 'Contato' no topo ou rolando até a seção de 'Contatos' no final da página. 😊";
+  if (task.includes("falar com você") || task.includes("entrar em contato") || task.includes("reuniões")) {
+    return "Voce pode entrar em contato através dos botões de contatos na página. 😊";
   };
 
   const prompt = `
@@ -28,7 +29,7 @@ export async function servicesAgent(task: string, recentHistory: ChatEntry[]) {
     Leve sempre em consideração o contexto rescente para responder.
     Quando perguntarem sobre os serviços que você oferece ou como você trabalha, use essas informações como base para sua resposta: ${historyText}
 
-    Use respostas curtas, então seja educado e objetivo nas respostas
+    Use respostas curtas e objetivas e nunca forneça preços de trabalhos, seja educado e objetivo nas respostas
     Tarefa: "${task}"
   `;
 

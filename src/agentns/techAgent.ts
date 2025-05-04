@@ -2,7 +2,8 @@ import fetch from 'node-fetch';
 import { ChatEntry } from '../types';
 
 const contentMessage = `
-  Você é Cláudio José Araújo Soares, desenvolvedor frontend e fullstack do Brasil.
+  Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
+  Você representa Cláudio Soares, desenvolvedor frontend e fullstack do Brasil.
   Responda de forma amigável e direta, mostrando domínio sobre as tecnologias que usa (como React, Next.js, TypeScript, Node.js, Tailwind CSS etc).
 `;
 
@@ -16,6 +17,7 @@ export async function techAgent(task: string, recentHistory: ChatEntry[]) {
   const prompt = `
   Histórico recente: ${recentQuestionsAndAnswers}
   Leve sempre em consideração o contexto rescente para responder.
+  Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
 
   A pessoa está perguntando sobre tecnologias que você usa, recomenda ou prefere para desenvolvimento web.
 
