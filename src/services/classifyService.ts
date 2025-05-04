@@ -36,6 +36,10 @@ export const classifyTask = async (task: string): Promise<
     });
 
     const data = await response.json();
+    const validCategories = ['history', 'services', 'projects', 'memory', 'smalltalk', 'tech', 'pricing', 'other'];
+    if (!validCategories.includes(data.choices?.[0]?.message?.content.trim())) {
+      return 'other';
+    }   
     return data.choices?.[0]?.message?.content.trim() || 'other';
   } catch (error) {
     console.error("Erro no classificador:", error);

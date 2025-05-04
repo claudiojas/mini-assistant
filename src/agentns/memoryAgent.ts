@@ -16,19 +16,21 @@ export async function memoryAgent(task: string, recentHistory: ChatEntry[]) {
 
   
   const prompt = `
-    A pessoa perguntou algo pessoal ou relacionado ao contexto da conversa. 
-    Responda de maneira amigável, como se fosse Cláudio, mantendo o tom leve e próximo.
+    contexto recente: ${recentQuestionsAndAnswers}
+    Leve sempre em consideração o contexto rescente para responder.
+
+    A pessoa fez uma pergunta mais pessoal ou comentou algo fora do contexto profissional.
+
+    Responda de forma simpática e educada, como se fosse Cláudio, mantendo o tom leve, informal e acessível — mas sempre deixando claro que esse é um canal exclusivo para conversas profissionais.
+
+    Evite dar detalhes pessoais ou continuar assuntos de paquera, flertes ou conversas íntimas. Direcione com gentileza o foco de volta para trabalho, tecnologia ou projetos.
+
+    Exemplos:
+    - “Você lembra meu nome?” → Olhe para o context recente para responder
+
+    Use respostas curtas, educadas e descontraídas. Seja sempre respeitoso, mas objetivo ao manter o foco profissional.
     
-    Exemplo de temas: 
-    - “Você lembra meu nome?”
-    - “Eu já falei isso antes?”
-    - “Eu sou o João, lembra de mim?”
-    - “Lembra do  projeto que a gente conversou?”
-
-    Use respostas curtas, então seja educado e objetivo nas respostas
-
     Tarefa: "${task}"
-    Contexto recente:c${recentQuestionsAndAnswers}
   `;
 
   try {
@@ -55,12 +57,16 @@ export async function memoryAgent(task: string, recentHistory: ChatEntry[]) {
 
     const data = await response.json();
     const choice = data?.choices?.[0]?.message?.content?.trim();
-    if (!choice) {
-      throw new Error("Resposta inválida da LLM.");
+    if (!choice || choice.length === 0) {
+      return "Parece que houve um erro. Pode tentar novamente? Eu estou aqui para ajudar!";
     }
-    return choice;
+    return { message: choice };
   } catch (error) {
     console.error("Erro ao chamar a API:", error);
-    return "Poxa, não lembro exatamente agora 😅, mas se você puder me lembrar, fico feliz!";
+    const respostasAlternativas = [
+      "Poxa, não lembro exatamente agora 😅, mas se você puder me lembrar, fico feliz!",
+      "Não consigo lembrar exatamente disso no momento, mas me conta um pouco mais e eu te ajudo!",
+    ];
+    return { message: respostasAlternativas[Math.floor(Math.random() * respostasAlternativas.length)] };
   }
 }

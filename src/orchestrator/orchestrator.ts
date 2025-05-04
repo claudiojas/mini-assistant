@@ -30,12 +30,16 @@ export const orchestrateTask = async (task: string ) => {
 
   // Antes de chamar o agente, você pode obter o contexto recente (últimas perguntas e respostas)
   const recentHistory = chatHistory.getRecentQuestionsAndAnswers();
-
+  
   // Passa a pergunta e o histórico recente para o agente
-  const agentResponse = agent ? await agent(task, recentHistory) : { message: 'Desculpe, não entendi sua pergunta. Você pode reformular?' };
+  const agentResponse = agent
+  ? await agent(task, recentHistory)
+  : { message: 'Desculpe, não entendi sua pergunta. Você pode reformular?' };
+
 
   // Agora, você adiciona a pergunta e a resposta ao histórico
-  chatHistory.addHistory(task, agentResponse);
+  const responseText = typeof agentResponse === 'string' ? agentResponse : agentResponse?.message || '';
+  chatHistory.addHistory(task, responseText);
 
   // Retorna a resposta do agente ao usuário
   return agentResponse;

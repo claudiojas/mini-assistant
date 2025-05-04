@@ -30,10 +30,12 @@ export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
   }).join("\n");
 
   const prompt = `
+    Histórico recente: ${recentQuestionsAndAnswers}
+    Leve sempre em consideração o contexto rescente para responder.
+    
     Use respostas curtas, então seja educado e objetivo nas respostas
     Informações adicionais: ${historyText}
-    Contexto recente:
-    ${recentQuestionsAndAnswers}
+    
     Tarefa: "${task}"
   `;
 
@@ -61,12 +63,13 @@ export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
 
     const data = await response.json();
     const choice = data?.choices?.[0]?.message?.content?.trim();
-    if (!choice) {
-      throw new Error("Resposta inválida da LLM.");
+   
+    if (!choice || choice.length === 0) {
+      return "Desculpe, não consegui processar sua pergunta. Tente algo diferente!";
     }
-    return choice;
+    return { message: choice };
   } catch (error) {
     console.error("Erro ao chamar a API:", error);
-    return "Poxa, não consegui entender direito agora. Você pode tentar perguntar de outro jeito?";
+    return { message: "Poxa, não consegui entender direito agora. Você pode tentar perguntar de outro jeito?" };
   }
 }
