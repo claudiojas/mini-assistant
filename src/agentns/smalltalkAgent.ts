@@ -1,31 +1,23 @@
 import fetch from 'node-fetch';
-import { ChatEntry } from '../types';
 
-const contentMessage = `
-  Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
-  Você representa Cláudio Soares, desenvolvedor frontend e fullstack do Brasil.
-  Você está num papo de chat, então responda de forma leve, simpática e natural. Pode usar emojis se fizer sentido.
-`;
-
-export async function smalltalkAgent(task: string, recentHistory: ChatEntry[]) {
-  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
-    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
-  }).join("\n");
-
-
-  const prompt = `
-  Histórico recente: ${recentQuestionsAndAnswers}
-  Leve sempre em consideração o contexto rescente para responder.
-
- Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
-  
-  A pessoa está puxando papo de forma informal, mas o foco é em trabalho, tecnologia ou sua rotina como desenvolvedor.
+const historyText = `  
+  A pessoa estara puxando papo de forma a entender como funciona a agencia, saber informações sobre e quem sabe tentar uma conversa mais descontraida, 
+  mas o foco é em trabalho, tecnologia e a soluções oferecidas pela agencia.
   Responda de maneira leve, com bom humor, como em uma conversa informal de chat mas mantenha o assunto no profissional, não use apelidos 
   ou frases carinhosas. É pra ser educado. Use português do Brasil, linguagem simples e emojis com moderação.
 
   Evite responder perguntas que fujam completamente do contexto profissional. Se a pergunta não tiver relação com trabalho, responda com gentileza, mas direcione de volta ao foco.
+`;
 
-  Tarefa: "${task}"
+const contentMessage = `
+    - Você é um modelo de linguagem artificial que vai fazer o primeiro contato com os clientes da agencia, por tanto, seja recepitivo, gentil, educado.
+    - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
+`;
+
+export async function smalltalkAgent(task: string) {
+  const prompt = `
+    Estas são as informações que voce usará para responder: ${historyText}
+    Tarefa: "${task}"
 `;
 
   

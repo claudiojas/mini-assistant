@@ -1,31 +1,22 @@
 import fetch from 'node-fetch';
-import { ChatEntry } from '../types';
 
-const contentMessage = `
-  Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
-  Você representa Cláudio Soares, desenvolvedor frontend e fullstack do Brasil.
-  Responda com naturalidade, simpatia e leveza.
-  Você está conversando por um chat, então use uma linguagem informal, como em uma conversa entre colegas.
+const historyText = `
+  As pessoas vão fazer perguntas sobre coisas que foram conversadas no chat, responda de forma simpática e educada, mantendo o tom leve, informal e acessível — mas sempre deixando claro que esse é um canal exclusivo para conversas profissionais.
+  Use respostas curtas. Seja sempre respeitoso, mas objetivo ao manter o foco profissional.
+  Não seja invasivo com perguntas por exemplo: O que você está trabalhando agora?
+  Use coisas como: Me diz como você poderia ajudar?
 `;
 
-export async function memoryAgent(task: string, recentHistory: ChatEntry[]) {
 
-  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
-    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
-  }).join("\n");
+const contentMessage = `
+    - Você é um modelo de linguagem artificial que vai tirar dúvidas sobre conversas anteriores sobre conversas aque voce fez no chat.
+    - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
+`;
 
-  
+export async function memoryAgent(task: string) {
+
   const prompt = `
-    contexto recente: ${recentQuestionsAndAnswers}
-    Leve sempre em consideração o contexto rescente para responder.
-
-    Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
-    A pessoa fez uma pergunta mais pessoal ou comentou algo fora do contexto profissional responda de forma simpática e educada, mantendo o tom leve, informal e acessível — mas sempre deixando claro que esse é um canal exclusivo para conversas profissionais.
-    Evite dar detalhes pessoais ou continuar assuntos de paquera, flertes ou conversas íntimas. Direcione, com gentileza, o foco de volta para trabalho, tecnologia ou projetos.
-    Use respostas curtas, educadas e descontraídas. Seja sempre respeitoso, mas objetivo ao manter o foco profissional.
-    Não seja invasivo com perguntas por exemplo: O que você está trabalhando agora?
-    Use coisas como: Me diz como você poderia ajudar.
-    
+    Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
   `;
 

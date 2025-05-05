@@ -1,45 +1,26 @@
 import fetch from 'node-fetch';
-import { ChatEntry } from '../types';
 
 const historyText = `
-    Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
-    Você representa Cláudio Soares, desenvolvedor full stack
-    Alguns projetos que Cláudio fez:
-    Projeto de IA para monitoramento de consumo: Sistema que usa Google Gemini para interpretar dados de medidores de água e gás e salvar em banco de dados.
-    Aplicativo de Geolocalização: Integração com Google Maps API para conectar motoristas e passageiros, similar ao Uber.
-    Sistema de chatbot que usa tecnicas sistemas multiagentes usando inteligencia artificial e engenharia de prompt aplicada para gerar respostas mais fluída e mais natural para o chatbot.
-
-    Instituto Mãos Unidas (voluntário): E-commerce com Next.js, React e Tailwind CSS para vendas de produtos feitos por mulheres apoiadas pelo Instituto, com integração à API do Yampi.
-    Se fizer sentido, você pode mencionar que todos os projetos foram focados em acessibilidade, performance, segurança e boas práticas de código.
-
-    Pode também adaptar a resposta conforme o tipo de projeto que a pessoa busca (ex: e-commerce, app com mapa, projeto com IA, low-code etc).
-    Importante: Nunca responda com um texto longo ou muito técnico. Fale com naturalidade, como um bate-papo em um chat.
+  A agência já construiu com sucesso projetos como:
+  Projeto de IA para monitoramento de consumo: Sistema que usa Google Gemini para interpretar dados de medidores de água e gás e salvar em banco de dados.
+  Aplicativo de Geolocalização: Integração com Google Maps API para conectar motoristas e passageiros, similar ao Uber.
+  Sistema de chatbot com IA: Uso de técnicas de sistemas multiagentes e engenharia de prompt aplicada para gerar respostas mais fluídas e naturais.
+  Landing pages otimizadas para conversão: Páginas desenvolvidas com foco em performance, SEO e design responsivo, utilizadas em campanhas de marketing digital para captação de leads e validação de produtos.
+  Painéis administrativos personalizados: Dashboards interativos com filtros, gráficos e gerenciamento de dados em tempo real para clientes de diversos segmentos.
+  Integrações com APIs de pagamento: Implementações seguras com Stripe, PayPal e Pix, permitindo cobranças automatizadas e gestão de assinaturas.
+  Plataforma de agendamento online: Sistema completo para profissionais autônomos e empresas, com confirmação automática por e-mail e integração com Google Agenda.
+  Ambientes com autenticação e controle de acesso: Aplicações com login seguro, JWT, níveis de permissão e painéis distintos para cada tipo de usuário.
 `;
 
 const contentMessage = `
-    Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
-    Você representa Cláudio Soares, desenvolvedor full stack
-    Voce vai responder como um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat, de forma breve, amigável e natural, mas não precisa responder
-    como se fosse o primeiro contato do dia com expressões como: "olá..". Responda como se estivesse conversando com alguém no chat.
+    - Você é um modelo de linguagem artificial que vai tirar dúvidas sobre a projetos profissionais sobre uma agência que cria soluções tecnologicas para empresas, escolas, pessoas fissicas etc.
+    - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
 `;
 
-export async function projectsAgent(task: string, recentHistory: ChatEntry[]) {
-  // Formatar o histórico recente para incluir no prompt
-  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
-    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
-  }).join("\n");
-
-  if (task.includes("e-commerce")) {
-    return "Trabalhei em um e-commerce com Next.js e React para o Instituto Mãos Unidas, integrando com a API do Yampi. Foi um desafio bem legal!";
-  };
+export async function projectsAgent(task: string) {
 
   const prompt = `
-    Histórico recente: ${recentQuestionsAndAnswers}
-    Leve sempre em consideração o contexto rescente para responder.
-    Quando te perguntarem sobre projetos, use como base essas informações: ${historyText}
-
-    Use respostas curtas, então seja educado e objetivo nas respostas
-
+    Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
   `;
 

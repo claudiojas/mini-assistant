@@ -1,45 +1,31 @@
 import fetch from 'node-fetch';
-import { ChatEntry } from '../types';
 
 const historyText = `
-    Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
-    Você representa Cláudio Soares que tem experiência em desenvolvimento web, integração de sistemas, 
-    otimização de performance, acessibilidade, segurança, automação de pipelines CI/CD e liderança técnica de equipes.
-    Começou sua historia na programação no final de 2021 em aulas ministradas por um professor da UFMA aos sábados, logo depois
-    em 2022 ingressou na Cubos Academy onde estudou por 8 meses em um curso intensivo de desenvolvimento fullstack, em 2023 ingressou
-    na Alura pra mais uma jornada de aprendizado, desta vez foram 6 meses focado em frontend. Em 2024 trabalhou como Desenvolvedor Frontend voluntário na Lacrei Saúde, 
-    liderando reuniões, orientando o time e ajudando a melhorar as plataformas e no design system em vários processos. Também atuou como voluntário no Instituto Mãos Unidas,
-    como front end voluntário usando Next.js, React e Tailwind. Atualmente, está estudando Análise e Desenvolvimento de Sistemas pela UNIGRAND,
-    AWS, arquitetura escalável, sistemas multiagentes com LLMs e engenharia de prompt aplicada para ampliar suas capacidades em projetos low-code. Tem experiência prática com React, Next.js, Node.js, Docker, Prisma, Storybook, 
-    PostgreSQL, MongoDB, e segurança usando JWT.
-
-    Projetos pessoais: Pretende criar uma plataforma Digital para compartilhar conhecimentos de padrões de desenvolvimento; 
-    desenvolveu sistema de monitoramento de consumo de água e gás com IA; um aplicativo de geolocalização usando Google Maps API 
-    e recentemente construi um projeto de sistemas multiagentes com LLMs e engenharia de prompt aplicada.
-
-.
-
-    Habilidades: Liderança técnica, colaboração em equipe, inovação, resolução de problemas e boa comunicação.
-
-    Idioma: Português nativo e inglês técnico para leitura de documentação e código.
+ Histórico da agência Stackwise
+  A Stackwise foi fundada em 2021 com o propósito de oferecer soluções digitais inteligentes e escaláveis para negócios modernos. Criada por desenvolvedores apaixonados por inovação, a agência nasceu 100% online e se consolidou rapidamente no cenário digital como referência em projetos web e mobile construídos com o ecossistema JavaScript/TypeScript, incluindo React, Node.js e tecnologias de IA generativa.
+  Desde o início, a Stackwise focou em criar experiências digitais fluidas, performáticas e bem arquitetadas, seja para startups em fase de validação ou para empresas que precisavam escalar suas operações digitais.
+  Entre seus principais marcos estão:
+  2022 – Desenvolvimento de um sistema inteligente para monitoramento de consumo de água e gás, utilizando Google Gemini para interpretar dados em tempo real e armazená-los com segurança em bancos de dados relacionais.
+  2023 – Lançamento de um aplicativo mobile com geolocalização, inspirado em plataformas como Uber, conectando motoristas e passageiros com rotas otimizadas através da API do Google Maps.
+  2023 – Criação de um chatbot com IA, combinando técnicas de sistemas multiagentes e engenharia de prompts, capaz de simular conversas naturais com alto grau de compreensão contextual.
+  2024 – Produção de landing pages de alta conversão, com design responsivo, copywriting orientado a dados e integrações com ferramentas de marketing como Google Analytics, Meta Pixel e testes A/B.
+  2024 – Entrega de painéis administrativos personalizados, com autenticação segura (JWT), dashboards em tempo real e controle granular de permissões para múltiplos tipos de usuários.
+  2025 – Ampliação do portfólio com soluções SaaS baseadas em IA, integrando modelos generativos a fluxos de trabalho como atendimento ao cliente, organização interna e automações no front e no backend.
+  Hoje, a Stackwise atende empresas e empreendedores de diversos setores, mantendo uma cultura de excelência técnica, agilidade na entrega e forte compromisso com a experiência do usuário final.
 `;
 
-export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
-  // Formatar o histórico recente para incluir no prompt
-  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
-    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
-  }).join("\n");
+export async function historyAgent(task: string ) {
 
   const prompt = `
-    Histórico recente: ${recentQuestionsAndAnswers}
-    Leve sempre em consideração o contexto rescente para responder.
-    
-    Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat que vai sanar algumas dúvidas das pessoas no chat, de maneira breve, amigável e natural como em uma conversa de chat.
-    Use respostas curtas, então seja educado e objetivo nas respostas
-    Informações adicionais: ${historyText}
-    
+    - Use respostas curtas, seja simpático e sempre direcione as conversas para o lado profissional de uma forma gentil e educada.
+    Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
   `;
+
+  const contentMessage = `
+    - Você é um modelo de linguagem artificial que vai tirar dúvidas sobre a história profissional sobre a agência que cria soluções tecnologicas para empresas, escolas, pessoas fissicas etc..
+    - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
+`;
 
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
@@ -53,7 +39,7 @@ export async function historyAgent(task: string, recentHistory: ChatEntry[]) {
         messages: [
           {
             role: 'system',
-            content: 'Você é Cláudio Soares, desenvolvedor frontend e fullstack do Brasil, fale sobre sua trajetória de carreira, destacando suas principais experiências e habilidades.'
+            content: contentMessage
           },
           {
             role: 'user',

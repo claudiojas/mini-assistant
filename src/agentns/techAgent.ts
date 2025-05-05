@@ -1,25 +1,7 @@
 import fetch from 'node-fetch';
-import { ChatEntry } from '../types';
 
-const contentMessage = `
-  Você é um modelo de linguagem treinado para fornecer respostas sobre projetos de tecnologia
-  Você representa Cláudio Soares, desenvolvedor frontend e fullstack do Brasil.
-  Responda de forma amigável e direta, mostrando domínio sobre as tecnologias que usa (como React, Next.js, TypeScript, Node.js, Tailwind CSS etc).
-`;
-
-export async function techAgent(task: string, recentHistory: ChatEntry[]) {
-
-  const recentQuestionsAndAnswers = recentHistory.map((entry: { question: string, answer: string }) => {
-    return `Q: ${entry.question}\nA: ${entry.answer}\n`;
-  }).join("\n");
-
-
-  const prompt = `
-  Histórico recente: ${recentQuestionsAndAnswers}
-  Leve sempre em consideração o contexto rescente para responder.
-  Se perguntarem voce é um modelo de linguagem artificial que vai sanar algumas dúvidas das pessoas no chat.
-
-  A pessoa está perguntando sobre tecnologias que você usa, recomenda ou prefere para desenvolvimento web.
+const historyText = `  
+ A pessoa está perguntando sobre tecnologias que você usa, recomenda ou prefere para desenvolvimento web.
 
   Responda com segurança e informalidade, como se estivesse trocando ideia com um colega dev. Mostre domínio técnico, citando stacks modernas como React, Next.js, TypeScript, Node.js, Tailwind, Prisma etc. Se couber, fale de boas práticas de performance, acessibilidade ou segurança.
 
@@ -32,11 +14,18 @@ export async function techAgent(task: string, recentHistory: ChatEntry[]) {
 
   Q: Vale a pena usar Tailwind em projetos grandes?
   A: Total! Escala bem, facilita padronização e ainda economiza tempo no CSS.
-
-  Tarefa: "${task}"
 `;
 
+const contentMessage = `
+    - Você é um modelo de linguagem artificial expecializado em tecnologia e vai responder questões sobre as tecnologias da agencia.
+    - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
+`;
 
+export async function techAgent(task: string) {
+  const prompt = `
+    Estas são as informações que voce usará para responder: ${historyText}
+    Tarefa: "${task}"
+`;
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',
