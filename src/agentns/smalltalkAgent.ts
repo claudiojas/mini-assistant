@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 
 const historyText = `  
   A pessoa estara puxando papo de forma a entender como funciona a agencia, saber informações sobre e quem sabe tentar uma conversa mais descontraida, 
@@ -20,8 +21,7 @@ export async function smalltalkAgent(task: string) {
     Tarefa: "${task}"
 `;
 
-  
-
+  checkEnvironmentVariable();
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',

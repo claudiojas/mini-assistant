@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 
 const historyText = `
  Histórico da agência Stackwise
@@ -27,6 +28,7 @@ export async function historyAgent(task: string ) {
     - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
 `;
 
+  checkEnvironmentVariable();
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',

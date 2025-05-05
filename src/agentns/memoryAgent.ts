@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 
 const historyText = `
   As pessoas vão fazer perguntas sobre coisas que foram conversadas no chat, responda de forma simpática e educada, mantendo o tom leve, informal e acessível — mas sempre deixando claro que esse é um canal exclusivo para conversas profissionais.
@@ -20,6 +21,7 @@ export async function memoryAgent(task: string) {
     Tarefa: "${task}"
   `;
 
+  checkEnvironmentVariable();
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',

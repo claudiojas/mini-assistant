@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 
 const historyText = `  
  A pessoa está perguntando sobre tecnologias que você usa, recomenda ou prefere para desenvolvimento web.
@@ -25,7 +26,9 @@ export async function techAgent(task: string) {
   const prompt = `
     Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
-`;
+  `;
+  
+  checkEnvironmentVariable();
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',

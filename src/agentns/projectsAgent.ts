@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 
 const historyText = `
   A agência já construiu com sucesso projetos como:
@@ -24,6 +25,7 @@ export async function projectsAgent(task: string) {
     Tarefa: "${task}"
   `;
 
+  checkEnvironmentVariable();
   try {
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',
