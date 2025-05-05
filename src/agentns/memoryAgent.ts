@@ -1,5 +1,6 @@
-import fetch from 'node-fetch';
 import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
+import { callGROQAgent } from '../services/callGROQAgent';
+import { erroAgente } from '../services/erroAgent';
 
 const historyText = `
   As pessoas vão fazer perguntas sobre coisas que foram conversadas no chat, responda de forma simpática e educada, mantendo o tom leve, informal e acessível — mas sempre deixando claro que esse é um canal exclusivo para conversas profissionais.
@@ -23,35 +24,13 @@ export async function memoryAgent(task: string) {
 
   checkEnvironmentVariable();
   try {
-    const response = await fetch(process.env.GROQ_API_URL || "", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: contentMessage,
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ]
-      })
-    });
-
-    const data = await response.json();
-    const choice = data?.choices?.[0]?.message?.content?.trim();
+    const choice = await callGROQAgent(contentMessage, prompt)
     if (!choice || choice.length === 0) {
       return "Parece que houve um erro. Pode tentar novamente? Eu estou aqui para ajudar!";
     }
     return { message: choice };
   } catch (error) {
-    console.error("Erro ao chamar a API:", error);
+    erroAgente(error, "memoryAgent");
     const respostasAlternativas = [
       "Poxa, não lembro exatamente agora 😅, mas se você puder me lembrar, fico feliz!",
       "Não consigo lembrar exatamente disso no momento, mas me conta um pouco mais e eu te ajudo!",

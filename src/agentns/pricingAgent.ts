@@ -1,5 +1,6 @@
-import fetch from 'node-fetch';
 import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
+import { callGROQAgent } from '../services/callGROQAgent';
+import { erroAgente } from '../services/erroAgent';
 
 const historyText = `  
   A pessoa estão perguntando sobre valores, orçamentos, formas de cobrança ou pagamento.
@@ -32,35 +33,13 @@ export async function pricingAgent(task: string) {
   checkEnvironmentVariable();
   
   try { 
-    const response = await fetch(process.env.GROQ_API_URL || "", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: contentMessage,
-          },
-          {
-            role: 'user',
-            content: prompt,
-          },
-        ]
-      })
-    });
-
-    const data = await response.json();
-    const choice = data?.choices?.[0]?.message?.content?.trim();
+    const choice = await callGROQAgent(contentMessage, prompt)
     if (!choice || choice.length === 0) {
       return "Parece que houve um erro. Pode tentar novamente? Eu estou aqui para ajudar!";
     }
     return { message: choice };
   } catch (error) {
-    console.error("Erro ao chamar o pricingAgent:", error);
+    erroAgente(error, "pricingAgent");
     return { message: "Posso fazer um orçamento com base no seu projeto! Preencha o formulário no site e logo entro em contato 😉" };
   }
 }
