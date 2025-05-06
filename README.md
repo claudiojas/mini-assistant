@@ -1,4 +1,5 @@
-# Mini Assistant
+# Mini Assistant - Em desenvolvimento.
+obs: Esta documentação é uma prévia e não é uma versão definitiva.
 
 Projeto simples de orquestração de agentes utilizando Node.js, Express e OpenAI.
 
