@@ -1,4 +1,8 @@
+import { checkEnvironmentVariable } from "./checkEnvironmentVariable";
+
 export const callGROQAgent = async (systemPrompt: string, userPrompt: string) => {
+    checkEnvironmentVariable();
+
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',
       headers: {

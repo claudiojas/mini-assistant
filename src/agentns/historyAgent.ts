@@ -1,4 +1,3 @@
-import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -29,7 +28,6 @@ export async function historyAgent(task: string ) {
     - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
 `;
 
-  checkEnvironmentVariable();
   try {
     const choice = await callGROQAgent(contentMessage, prompt)
    

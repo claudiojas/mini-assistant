@@ -1,23 +1,21 @@
+import { cachedClassifications } from "./cachedClassifications";
+import { similarityMatch } from "./similarityMatch";
+
 export const classifyTask = async (task: string): Promise<
-  'history' | 'services' | 'projects' | 'memory' | 'smalltalk' | 'tech' | 'pricing' | 'other'
+  'history' | 'services' | 'projects' | 'memory' | 'smalltalk' | 'tech' | 'pricing' | 'contacts' | 'other' | 'Limite de tokens atingido. Tente novamente mais tarde.'
 > => {
   const prompt = `
-    Classifique a seguinte tarefa em uma das seguintes categorias:
-    - history (trajetória ou histórico profissional)
-    - services (o que você oferece ou como trabalha)
-    - projects (projetos realizados)
-    - memory (perguntas pessoais ou de contexto)
-    - smalltalk (cumprimentos ou conversa informal)
-    - tech (dúvidas sobre tecnologias ou stacks)
-    - pricing (perguntas sobre preço ou orçamento)
-    - other (se não se encaixar em nenhuma das anteriores)
-
-    Apenas responda com uma palavra.
-    
-    Tarefa: "${task}"
+    Classifique a mensagem a seguir com apenas uma palavra, escolhendo entre: history, services, projects, memory, smalltalk, tech, pricing, contacts, other, Limite de tokens atingido. Tente novamente mais tarde.
   `;
 
+  
   try {
+    const cached = cachedClassifications(task);
+    if (cached) return cached;
+
+    const matched = similarityMatch(task);
+    if (matched) return matched;
+
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',
       headers: {
@@ -28,16 +26,27 @@ export const classifyTask = async (task: string): Promise<
         model: 'llama-3.3-70b-versatile',
         messages: [
           {
+            role: 'system',
+            content: 'Você é um classificador de tarefas. Responda apenas com a categoria.'
+          },
+          {
             role: 'user',
             content: prompt
           }
         ]
       })
+      
     });
 
     const data = await response.json();
-    const validCategories = ['history', 'services', 'projects', 'memory', 'smalltalk', 'tech', 'pricing', 'other'];
-    if (!validCategories.includes(data.choices?.[0]?.message?.content.trim())) {
+    if (data.error?.code === "rate_limit_exceeded") {
+      console.warn("Limite de tokens atingido. Tente novamente mais tarde.");
+      return 'Limite de tokens atingido. Tente novamente mais tarde.';
+    }
+    const validCategories = ['history', 'services', 'projects', 'memory', 'smalltalk', 'tech', 'pricing', 'contacts', 'other', 'Limite de tokens atingido. Tente novamente mais tarde.'];
+
+    const category = data.choices?.[0]?.message?.content.trim().toLowerCase();
+    if (!validCategories.includes(category)) {
       return 'other';
     }   
     return data.choices?.[0]?.message?.content.trim() || 'other';

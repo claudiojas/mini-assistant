@@ -1,4 +1,3 @@
-import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -26,7 +25,6 @@ export async function projectsAgent(task: string) {
     Tarefa: "${task}"
   `;
 
-  checkEnvironmentVariable();
   try {
     const choice = await callGROQAgent(contentMessage, prompt)
     if (!choice || choice.length === 0) {

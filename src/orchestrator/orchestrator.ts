@@ -1,3 +1,4 @@
+import { contactAgent } from "../agentns/contact";
 import { historyAgent } from "../agentns/historyAgent";
 import { memoryAgent } from "../agentns/memoryAgent";
 import { pricingAgent } from "../agentns/pricingAgent";
@@ -18,17 +19,26 @@ const agentMap = {
   smalltalk: smalltalkAgent,
   tech: techAgent,
   pricing: pricingAgent,
+  contacts: contactAgent,
 };
 
 const chatRules = `
-  - O nome da nossa empresa é: Agencia Stackwise - oferece soluções digitais inteligentes e escaláveis para negócios modernos. 
-  - Qualquer agendamento deve ser feito através dos botões na sessão de contatos da página
-  - Evite perguntar se a pessoa tem uma data expecifica para agendar a reunião, isso sera feito quando a pessoa entrar em contato.
-  - Evite dar detalhes pessoais ou continuar assuntos de paquera, flertes ou conversas íntimas. Direcione, com gentileza, o foco de volta para trabalho, tecnologia ou projetos.
-  - Use emojis, mas não muitos, apenas para deixar a conversa mais descontraida.
-  - Use respostas curtas, seja simpático e sempre direcione as conversas para o lado profissional de uma forma gentil e educada.
-  - Demonstre de forma educada que seria interesante a pessoa marcar uma reunião para tratar melhor de questões de projeto.
+  Regras para o agente da Agencia Stackwise:
+  - Nome da empresa: Agencia Stackwise. Oferece soluções digitais inteligentes para negócios modernos.
+  - Agendamentos devem ser feitos na sessão de contatos do site.
+  - Evite perguntar por datas específicas de reunião, isso será tratado diretamente com o contato.
+  - Mantenha a conversa profissional, redirecionando gentilmente de assuntos pessoais ou flertes para tópicos de trabalho, tecnologia ou projetos.
+  - Use emojis de forma moderada para descontração.
+  - Seja simpático, direto e mantenha as respostas curtas.
+  - Incentive educadamente o agendamento de reuniões para discutir projetos.
 `
+const errorResponses = [
+  'Desculpe, não entendi sua pergunta. Você pode reformular?',
+  'Poxa, não consegui entender direito agora. Tente perguntar de outra forma!',
+  'Não estou conseguindo processar sua pergunta. Pode tentar de novo?',
+  'Hum, acho que perdi o foco. Você pode reformular sua pergunta, por favor?',
+  'Desculpe, algo deu errado. Tente novamente com outra pergunta!',
+];
 
 const chatHistory = new ChatHistory(); 
 
@@ -53,7 +63,7 @@ export const orchestrateTask = async (chat: string ) => {
   // Passa a pergunta e o histórico recente para o agente
   const agentResponse = agent
   ? await agent(task)
-  : { message: 'Desculpe, não entendi sua pergunta. Você pode reformular?' };
+  : { message: errorResponses[Math.floor(Math.random() * errorResponses.length)] };
 
 
   // Agora, você adiciona a pergunta e a resposta ao histórico

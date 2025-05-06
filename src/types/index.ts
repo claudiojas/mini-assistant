@@ -25,3 +25,14 @@ export interface ChatEntry {
   question: string;
   answer: string;
 }
+
+export type Category =
+  | 'history'
+  | 'services'
+  | 'projects'
+  | 'memory'
+  | 'smalltalk'
+  | 'tech'
+  | 'pricing'
+  | 'contacts'
+  | 'other';

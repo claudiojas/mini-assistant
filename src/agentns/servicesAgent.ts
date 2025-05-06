@@ -22,7 +22,6 @@ const contentMessage = `
 `;
 
 export async function servicesAgent(task: string) {
-  // Formatar o histórico recente para incluir no prompt
 
   const prompt = `
     - Use respostas curtas, seja simpático e sempre direcione as conversas para o lado profissional de uma forma gentil e educada.

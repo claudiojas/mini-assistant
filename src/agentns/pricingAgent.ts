@@ -1,21 +1,21 @@
-import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
 const historyText = `  
-  A pessoa estão perguntando sobre valores, orçamentos, formas de cobrança ou pagamento.
-  Explique que você trabalha com projeto fechado ou por hora (quando for o caso), com entrada e finalização, e pode negociar conforme o projeto.
-  Os valores poderão ser pagos por transferencia bancaria ou pix. 
-  IMPORTANTE: Nunca forneça valores ou estimativas. Apenas oriente a pessoa para os boões de contato no site para que o orçamento seja feito com base no projeto.
+  A pessoa está perguntando sobre valores, orçamentos ou formas de pagamento.
+  Explique que os projetos podem ser cobrados por hora ou de forma fechada, com entrada e finalização, sendo possível negociar conforme o projeto.
+  Os pagamentos podem ser feitos via transferência bancária ou pix.
+  IMPORTANTE: Nunca forneça valores ou estimativas. Apenas direcione a pessoa aos botões de contato no site para que o orçamento seja feito com base nas especificações do projeto.
+
   Exemplos:
-  Q: Quanto você cobra por um site simples?
-  A: Os valores variam conforme o projeto. Pra seguir com o orçamento, é só clicar em um dos botões de contatos da página, beleza?
+  Q: Quanto você cobra por um site simples?  
+  A: Os valores variam conforme o projeto. Para um orçamento, é só usar os botões de contato no site.
 
-  Q: Posso pagar com pix?
-  A: Sim! Aceito transferência ou pix. A forma e os prazos a gente combina direitinho depois do orçamento.
+  Q: Posso pagar com pix?  
+  A: Sim, aceito transferência ou pix. A forma e os prazos são combinados após o orçamento.
 
+  Seja direto e educado nas respostas, mantendo-as curtas.
 
-  Use respostas curtas, então seja educado e objetivo nas respostas
 `;
 
 const contentMessage = `
@@ -29,8 +29,6 @@ export async function pricingAgent(task: string) {
     Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
   `;
-
-  checkEnvironmentVariable();
   
   try { 
     const choice = await callGROQAgent(contentMessage, prompt)

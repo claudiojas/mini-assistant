@@ -1,4 +1,3 @@
-import { checkEnvironmentVariable } from '../services/checkEnvironmentVariable';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -20,9 +19,8 @@ export async function smalltalkAgent(task: string) {
   const prompt = `
     Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
-`;
+  `;
 
-  checkEnvironmentVariable();
   try {
     const choice = await callGROQAgent(contentMessage, prompt)
 

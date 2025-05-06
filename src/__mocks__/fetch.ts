@@ -1,14 +1,13 @@
-export default async function fetchMock(url: string ) {
+export default async function fetch(url: string) {
+  if (url === 'https://api.example.com') {
     return {
-      json: async () => ({
-        choices: [
-          {
-            message: {
-              content: `Resposta simulada para a tarefa: ${url}`,
-            },
-          },
-        ],
-      }),
+      json: async () => ({ message: 'Histórico da agência Stackwise' }),
+      ok: true,
     };
   }
-  
+
+  return {
+    json: async () => ({ message: 'Erro desconhecido' }),
+    ok: false,
+  };
+}
