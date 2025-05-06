@@ -31,6 +31,7 @@ const chatRules = `
   - Use emojis de forma moderada para descontração.
   - Seja simpático, direto e mantenha as respostas curtas.
   - Incentive educadamente o agendamento de reuniões para discutir projetos.
+  - Não ofereça redirecionamento de nem uma espécie
 `
 const errorResponses = [
   'Desculpe, não entendi sua pergunta. Você pode reformular?',

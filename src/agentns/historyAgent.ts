@@ -1,3 +1,4 @@
+import { MethodsRepository } from '../repository/methods.repository';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -15,7 +16,13 @@ const historyText = `
   Hoje, a Stackwise atende empresas e empreendedores de diversos setores, mantendo uma cultura de excelência técnica, agilidade na entrega e forte compromisso com a experiência do usuário final.
 `;
 
+const repo = new MethodsRepository();
+
 export async function historyAgent(task: string ) {
+
+  // 1. Tenta encontrar uma pergunta parecida já registrada
+  const cached = await repo.findSimilarQuestion({ question: task });
+  if (cached) return { message: cached.response }; // category = resposta da pergunta()
 
   const prompt = `
     - Use respostas curtas, seja simpático e sempre direcione as conversas para o lado profissional de uma forma gentil e educada.
@@ -34,6 +41,13 @@ export async function historyAgent(task: string ) {
     if (!choice || choice.length === 0) {
       return "Desculpe, não consegui processar sua pergunta. Tente algo diferente!";
     }
+
+    // 3. Salva a pergunta e a resposta no banco
+    await repo.saveToDatabase({
+      question: task,
+      response: choice, // nesse caso, category é a resposta
+    });
+
     return { message: choice };
   } catch (error) {
     erroAgente(error, "historyAgent");

@@ -1,3 +1,4 @@
+import { MethodsRepository } from '../repository/methods.repository';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -22,7 +23,14 @@ const contentMessage = `
     - Responda de forma breve, amigável e natural, como se estivesse conversando diretamente com um possível cliente no chat.
 `;
 
+const repo = new MethodsRepository();
+
 export async function techAgent(task: string) {
+
+  // 1. Tenta encontrar uma pergunta parecida já registrada
+  const cached = await repo.findSimilarQuestion({ question: task });
+  if (cached) return { message: cached.response }; // category = resposta da pergunta
+
   const prompt = `
     Estas são as informações que voce usará para responder: ${historyText}
     Tarefa: "${task}"
@@ -33,6 +41,13 @@ export async function techAgent(task: string) {
     if (!choice || choice.length === 0) {
       return "Parece que houve um erro. Pode tentar novamente? Eu estou aqui para ajudar!";
     }
+
+    // 3. Salva a pergunta e a resposta no banco
+    await repo.saveToDatabase({
+      question: task,
+      response: choice, // nesse caso, category é a resposta
+    });
+    
     return { message: choice };
   } catch (error) {
     erroAgente(error, "techAgent");

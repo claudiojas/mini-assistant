@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"  // Banco de dados persistente local
+}
+
+model Classification {
+  id        Int      @id @default(autoincrement())
+  question  String
+  response  String
+  createdAt DateTime @default(now())
+}

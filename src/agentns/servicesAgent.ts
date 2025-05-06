@@ -1,3 +1,4 @@
+import { MethodsRepository } from '../repository/methods.repository';
 import { callGROQAgent } from '../services/callGROQAgent';
 import { erroAgente } from '../services/erroAgent';
 
@@ -21,7 +22,13 @@ const contentMessage = `
     "Entendi! Bom, a nossa agencia..."
 `;
 
+const repo = new MethodsRepository();
+
 export async function servicesAgent(task: string) {
+
+  // 1. Tenta encontrar uma pergunta parecida já registrada
+  const cached = await repo.findSimilarQuestion({ question: task });
+  if (cached) return { message: cached.response }; // category = resposta da pergunta
 
   const prompt = `
     - Use respostas curtas, seja simpático e sempre direcione as conversas para o lado profissional de uma forma gentil e educada.
@@ -34,6 +41,13 @@ export async function servicesAgent(task: string) {
     if (!choice || choice.length === 0) {
       return "Parece que houve um erro. Pode tentar novamente? Eu estou aqui para ajudar!";
     }
+
+    // 3. Salva a pergunta e a resposta no banco
+    await repo.saveToDatabase({
+      question: task,
+      response: choice, // nesse caso, category é a resposta
+    });
+    
     return { message: choice };
   } catch (error) {
     erroAgente(error, "servicesAgent");
