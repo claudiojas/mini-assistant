@@ -27,7 +27,7 @@ const contentMessage = `
 
 const repo = new MethodsRepository();
 
-export async function pricingAgent(task: string) {
+export async function pricingAgent(task: string, chat: string) {
 
   // 1. Tenta encontrar uma pergunta parecida já registrada
   const cached = await repo.findSimilarQuestion({ question: task });
@@ -46,8 +46,8 @@ export async function pricingAgent(task: string) {
 
     // 3. Salva a pergunta e a resposta no banco
     await repo.saveToDatabase({
-      question: task,
-      response: choice, // nesse caso, category é a resposta
+      question: chat ? chat : "",
+      response: choice, 
     });
     
     return { message: choice };

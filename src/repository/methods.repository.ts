@@ -1,6 +1,6 @@
-import { prisma } from "../BD/prisma.config";
 import { Classification } from "@prisma/client";
 import { IFindSimilarQuestion, IMethodsRepository, ISaveToDatabase } from "../interfaces/interfaces";
+import { prisma } from "../DB/prisma.config";
 
 export class MethodsRepository implements IMethodsRepository {
     async saveToDatabase(data: ISaveToDatabase): Promise<Classification> {
@@ -13,15 +13,13 @@ export class MethodsRepository implements IMethodsRepository {
     }
     async findSimilarQuestion(data: IFindSimilarQuestion): Promise<Classification | null> {
         const result = await prisma.classification.findMany({
-        where: {
-                question: {
-                    contains: data.question,
-                },
+            where: {
+              question: data.question,
             },
             orderBy: {
-                createdAt: 'desc', // Ordena por data, retornando a mais recente primeiro
+              createdAt: 'desc',
             },
-            take: 1, // Retorna apenas o primeiro resultado
+            take: 1,
         });
         
         return result.length > 0 ? result[0] : null;

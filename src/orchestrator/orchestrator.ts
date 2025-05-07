@@ -6,6 +6,7 @@ import { projectsAgent } from "../agentns/projectsAgent";
 import { servicesAgent } from "../agentns/servicesAgent";
 import { smalltalkAgent } from "../agentns/smalltalkAgent";
 import { techAgent } from "../agentns/techAgent";
+import { MethodsRepository } from "../repository/methods.repository";
 import { ChatHistory } from "../services/chatHistory";
 import { classifyTask } from "../services/classifyService";
 import { recentQuestionsAndAnswers } from "../services/recentQuestionsAndAnswers";
@@ -41,7 +42,9 @@ const errorResponses = [
   'Desculpe, algo deu errado. Tente novamente com outra pergunta!',
 ];
 
-const chatHistory = new ChatHistory(); 
+const chatHistory = new ChatHistory();
+const repo = new MethodsRepository();
+
 
 export const orchestrateTask = async (chat: string ) => {
   // Antes de chamar o agente, você pode obter o contexto recente (últimas perguntas e respostas)
@@ -55,6 +58,10 @@ export const orchestrateTask = async (chat: string ) => {
     ${chat}
   `
 
+  // 1. Tenta encontrar uma pergunta parecida já registrada
+  const cached = await repo.findSimilarQuestion({ question: chat ? chat : "" });
+  if (cached) return { message: cached.response }; // category = resposta da pergunta
+
   // A primeira parte pode ser onde você analisa o tipo de tarefa.
   const type = await classifyTask(task);
 
@@ -63,7 +70,7 @@ export const orchestrateTask = async (chat: string ) => {
   
   // Passa a pergunta e o histórico recente para o agente
   const agentResponse = agent
-  ? await agent(task)
+  ? await agent(task, chat)
   : { message: errorResponses[Math.floor(Math.random() * errorResponses.length)] };
 
 
