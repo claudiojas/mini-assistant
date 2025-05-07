@@ -149,13 +149,13 @@ const config = {
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": null,
-        "value": "file:./dev.db"
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = \"file:./dev.db\" // Banco de dados persistente local\n}\n\nmodel Classification {\n  id        Int      @id @default(autoincrement())\n  question  String\n  response  String\n  createdAt DateTime @default(now())\n}\n",
-  "inlineSchemaHash": "9d5ea76e98d25bf851c271d76fad5c1c994d483ce95e4c16ef84072a128e3af5",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\") // Banco de dados persistente local\n}\n\nmodel Classification {\n  id        Int      @id @default(autoincrement())\n  question  String\n  response  String\n  createdAt DateTime @default(now())\n}\n",
+  "inlineSchemaHash": "9be532cfb18b2f4267bf29b526e5c44d37d2b85db5b157a6a41c26f36221b631",
   "copyEngine": true
 }
 

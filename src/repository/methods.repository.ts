@@ -1,6 +1,6 @@
-import { Classification } from "@prisma/client";
 import { IFindSimilarQuestion, IMethodsRepository, ISaveToDatabase } from "../interfaces/interfaces";
 import { prisma } from "../DB/prisma.config";
+import { Classification } from "@prisma/client";
 
 export class MethodsRepository implements IMethodsRepository {
     async saveToDatabase(data: ISaveToDatabase): Promise<Classification> {

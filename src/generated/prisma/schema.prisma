@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db" // Banco de dados persistente local
+  url      = env("DATABASE_URL") // Banco de dados persistente local
 }
 
 model Classification {
