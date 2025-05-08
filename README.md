@@ -72,6 +72,9 @@ src/
 - `app/`: Contém as configurações de inicialização do sistema.
 - `server.ts`: Arquivo principal que inicializa o servidor Express.
 
+![ChatGPT Image 8 de mai  de 2025, 00_25_58](https://github.com/user-attachments/assets/a78658f1-aef4-4c0c-8b32-6ba4085ca5b4)
+
+
 ---
 
 ## Como Rodar o Projeto
