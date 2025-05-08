@@ -121,8 +121,13 @@ Se a classificação não bater com nenhuma categoria conhecida, retorna uma men
 
 ---
 
-## Licença
+## 📄 Licença
 
-ISC License.
+Este projeto está licenciado sob a **MIT License**.  
+Isso significa que você pode usá-lo, modificá-lo, distribuí-lo e até usá-lo comercialmente, desde que mantenha o aviso de direitos autorais e a licença incluída.
+
+Leia mais sobre a [licença MIT aqui](https://opensource.org/licenses/MIT).
+
+---
 
 
