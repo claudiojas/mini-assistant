@@ -1,9 +1,7 @@
 # Mini Assistant - Em desenvolvimento.
-obs: Esta documentação é uma prévia e não é uma versão definitiva.
-
-Projeto simples de orquestração de agentes utilizando Node.js, Express e OpenAI.
-
-Este projeto foi desenvolvido para servir como uma arquitetura minimalista de assistente, inspirado no conceito de "mini-n8n", com foco em modularidade, testes e extensibilidade de tarefas automatizadas.
+Mini Assistant é um projeto simples de orquestração de agentes utilizando Node.js, Express, OpenAI e MongoDB.
+Este projeto foi idealizado para fins de estudo sobre arquiteturas de sistemas multiagentes com LLMs, 
+aplicando técnicas de engenharia de prompt e otimização de chamadas externas.
 
 > Repositório: [github.com/claudiojas/mini-assistant](https://github.com/claudiojas/mini-assistant.git)
 
@@ -14,10 +12,10 @@ Este projeto foi desenvolvido para servir como uma arquitetura minimalista de as
 - Node.js
 - TypeScript
 - Express
-- Axios
 - dotenv
-- OpenAI API
-- Jest (para testes)
+- LLM
+- Prisma
+- MongoDB Atlas
 - TSX (para desenvolvimento com hot-reload)
 
 ## Scripts Disponíveis
@@ -29,24 +27,49 @@ Este projeto foi desenvolvido para servir como uma arquitetura minimalista de as
 ```
 src/
 ├── agentns/
+│   ├── contacts.ts
 │   ├── historyAgent.ts
+│   ├── memotyAgent.ts
+│   ├── pricingAgent.ts
 │   ├── projectsAgent.ts
-│   └── servicesAgent.ts
+│   ├── servicesAgent.ts
+│   ├── smaltalkAgent.ts
+│   └── tecAgent.ts
+├── DB/
+│   └── prisma.config.ts
+├── interfaces/
+│   └── interfaces.ts
 ├── orchestrator/
 │   └── orchestrator.ts
+├── repository/
+│   └── methods.repository.ts
+├── router/
+│   └── POST.ts
 ├── services/
 │   └── classifyService.ts
-├── server.ts
-└── tests/
-    └── integration.test.ts
+│   └── cachedClassifications.ts
+│   └── callGROQAgent.ts
+│   └── chatHistory.ts
+│   └── checkEnvironmentVariable.ts
+│   └── classifyService.ts
+│   └── erroAgent.ts
+│   └── formatResponse.ts
+├── types/
+│   └── index.ts
+├── app.ts
+└── server.ts
 ```
 
 ### Descrição dos Diretórios:
 
 - `agentns/`: Contém os agentes que tratam tarefas específicas (histórico, projetos, serviços).
+- `DB/`: Contém as configurações do Prisma.
+- `interfaces/`: Contém as interfaces dos metodos do repositorio.
+- `repository/`: Contém os metodos de acesso ao banco de dados.
+- `router/`: Contém as rotas da aplicação.
 - `orchestrator/`: Contém a lógica que decide qual agente chamar com base na classificação da tarefa.
 - `services/`: Serviços de apoio, como o serviço de classificação de tarefas usando IA.
-- `tests/`: Testes de integração utilizando Jest para validar o fluxo orquestrado.
+- `app/`: Contém as configurações de inicialização do sistema.
 - `server.ts`: Arquivo principal que inicializa o servidor Express.
 
 ---
@@ -69,7 +92,10 @@ npm install
 3. Configure um arquivo `.env` com sua chave da OpenAI:
 
 ```bash
-OPENAI_API_KEY=your_openai_api_key
+    GROQ_API_KEY="Chave da LLM"
+    GROQ_API_URL = "URL base da api"
+    CORS_ORIGIN="URL da api" 
+    DATABASE_URL="URL do seu banco de dados"
 ```
 
 4. Inicie o projeto em modo desenvolvimento:
@@ -78,25 +104,16 @@ OPENAI_API_KEY=your_openai_api_key
 npm run dev
 ```
 
----
-
-## Rodando os Testes
-
-Execute o comando abaixo para rodar os testes de integração:
-
-```bash
-npx jest
-```
-
----
-
 ## Exemplo de Fluxo de Orquestração
 
 1. O usuário envia uma tarefa, como: `"Fale sobre sua trajetória profissional"`.
-2. O serviço `classifyService` classifica essa tarefa como `history`.
-3. O `orchestrator` chama o `historyAgent` para tratar essa tarefa.
+2. O `orchestrator` acessa o metodo findSimilarQuestion para ver se já existe uma pergunta igual ao que o usuário fez, se existir já retorna a resposta para o usuário se não vai seguir o fluxo.
+3. O serviço `classifyService` classifica essa tarefa como `history`.
+    2.1 A função cachedClassifications busca na memória se existe uma classificação semelhante, se houver retorna a categoria se não retornar nada o fuxo seguei
+    2.2 Se não retornar nada de cachedClassifications a função similarityMatch é chamada, ela faz uma busca em uma lista por similaridade da chamada do usuário e palavras da memória ligadas a uma categoria, se encontar retorna a categoria, se não o fluxo segue.
+    2.3 Se não retornar nada faz a chamada na LLM que retorna uma categoria.
+4. O `orchestrator` verifica no chama o `historyAgent` para tratar essa tarefa que retorna uma resposta da LLM e armazena essa nova pergunta e resposta no banco de dados.
 4. O agente retorna a resposta apropriada para o usuário.
-
 Se a classificação não bater com nenhuma categoria conhecida, retorna uma mensagem padrão de erro educada.
 
 ---
@@ -105,112 +122,4 @@ Se a classificação não bater com nenhuma categoria conhecida, retorna uma men
 
 ISC License.
 
----
 
-# English Version
-
-# Mini Assistant
-
-Simple agent orchestration project using Node.js, Express, and OpenAI.
-
-This project was developed to serve as a minimalist assistant architecture, inspired by the "mini-n8n" concept, focusing on modularity, testing, and extensibility for automated tasks.
-
-> Repository: [github.com/claudiojas/mini-assistant](https://github.com/claudiojas/mini-assistant.git)
-
----
-
-## Technologies Used
-
-- Node.js
-- TypeScript
-- Express
-- Axios
-- dotenv
-- OpenAI API
-- Jest (for testing)
-- TSX (for hot-reload development)
-
-## Available Scripts
-
-- `npm run dev` — Starts the server in development mode using `tsx` with hot-reload.
-
-## Project Structure
-
-```
-src/
-├── agentns/
-│   ├── historyAgent.ts
-│   ├── projectsAgent.ts
-│   └── servicesAgent.ts
-├── orchestrator/
-│   └── orchestrator.ts
-├── services/
-│   └── classifyService.ts
-├── server.ts
-└── tests/
-    └── integration.test.ts
-```
-
-### Directory Description:
-
-- `agentns/`: Contains agents that handle specific tasks (history, projects, services).
-- `orchestrator/`: Contains logic to decide which agent to call based on task classification.
-- `services/`: Support services, like task classification using AI.
-- `tests/`: Integration tests using Jest to validate the orchestration flow.
-- `server.ts`: Main file that initializes the Express server.
-
----
-
-## How to Run the Project
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/claudiojas/mini-assistant.git
-cd mini-assistant
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Set up a `.env` file with your OpenAI key:
-
-```bash
-OPENAI_API_KEY=your_openai_api_key
-```
-
-4. Start the project in development mode:
-
-```bash
-npm run dev
-```
-
----
-
-## Running Tests
-
-Run the following command to execute the integration tests:
-
-```bash
-npx jest
-```
-
----
-
-## Example of Orchestration Flow
-
-1. The user sends a task, like: `"Fale sobre sua trajetória profissional"`.
-2. The `classifyService` classifies this task as `history`.
-3. The `orchestrator` calls the `historyAgent` to handle the task.
-4. The agent returns the appropriate response to the user.
-
-If the classification does not match any known category, a polite default error message is returned.
-
----
-
-## License
-
-ISC License.
