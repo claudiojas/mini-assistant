@@ -76,53 +76,6 @@ export class PrismaClient<
   $use(cb: Prisma.Middleware): void
 
 /**
-   * Executes a prepared raw query and returns the number of affected rows.
-   * @example
-   * ```
-   * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
-
-  /**
-   * Executes a raw query and returns the number of affected rows.
-   * Susceptible to SQL injections, see documentation.
-   * @example
-   * ```
-   * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
-
-  /**
-   * Performs a prepared raw query and returns the `SELECT` data.
-   * @example
-   * ```
-   * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
-
-  /**
-   * Performs a raw query and returns the `SELECT` data.
-   * Susceptible to SQL injections, see documentation.
-   * @example
-   * ```
-   * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
-   * ```
-   *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
-   */
-  $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
-
-
-  /**
    * Allows the running of a sequence of read/write operations that are guaranteed to either succeed or fail as a whole.
    * @example
    * ```
@@ -135,10 +88,24 @@ export class PrismaClient<
    * 
    * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
    */
-  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
+  $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P]): $Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
-  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
+  $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number }): $Utils.JsPromise<R>
 
+  /**
+   * Executes a raw MongoDB command and returns the result of it.
+   * @example
+   * ```
+   * const user = await prisma.$runCommandRaw({
+   *   aggregate: 'User',
+   *   pipeline: [{ $match: { name: 'Bob' } }, { $project: { email: true, _id: false } }],
+   *   explain: false,
+   * })
+   * ```
+   * 
+   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   */
+  $runCommandRaw(command: Prisma.InputJsonObject): Prisma.PrismaPromise<Prisma.JsonObject>
 
   $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<ClientOptions>, ExtArgs, $Utils.Call<Prisma.TypeMapCb<ClientOptions>, {
     extArgs: ExtArgs
@@ -613,7 +580,7 @@ export namespace Prisma {
     }
     meta: {
       modelProps: "classification"
-      txIsolationLevel: Prisma.TransactionIsolationLevel
+      txIsolationLevel: never
     }
     model: {
       Classification: {
@@ -648,10 +615,6 @@ export namespace Prisma {
             args: Prisma.ClassificationCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          createManyAndReturn: {
-            args: Prisma.ClassificationCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ClassificationPayload>[]
-          }
           delete: {
             args: Prisma.ClassificationDeleteArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ClassificationPayload>
@@ -668,10 +631,6 @@ export namespace Prisma {
             args: Prisma.ClassificationUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
-          updateManyAndReturn: {
-            args: Prisma.ClassificationUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ClassificationPayload>[]
-          }
           upsert: {
             args: Prisma.ClassificationUpsertArgs<ExtArgs>
             result: $Utils.PayloadToResult<Prisma.$ClassificationPayload>
@@ -684,6 +643,14 @@ export namespace Prisma {
             args: Prisma.ClassificationGroupByArgs<ExtArgs>
             result: $Utils.Optional<ClassificationGroupByOutputType>[]
           }
+          findRaw: {
+            args: Prisma.ClassificationFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.ClassificationAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
           count: {
             args: Prisma.ClassificationCountArgs<ExtArgs>
             result: $Utils.Optional<ClassificationCountAggregateOutputType> | number
@@ -695,21 +662,9 @@ export namespace Prisma {
     other: {
       payload: any
       operations: {
-        $executeRaw: {
-          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
-          result: any
-        }
-        $executeRawUnsafe: {
-          args: [query: string, ...values: any[]],
-          result: any
-        }
-        $queryRaw: {
-          args: [query: TemplateStringsArray | Prisma.Sql, ...values: any[]],
-          result: any
-        }
-        $queryRawUnsafe: {
-          args: [query: string, ...values: any[]],
-          result: any
+        $runCommandRaw: {
+          args: Prisma.InputJsonObject,
+          result: Prisma.JsonObject
         }
       }
     }
@@ -755,7 +710,6 @@ export namespace Prisma {
     transactionOptions?: {
       maxWait?: number
       timeout?: number
-      isolationLevel?: Prisma.TransactionIsolationLevel
     }
     /**
      * Global configuration for omitting model fields by default.
@@ -875,29 +829,19 @@ export namespace Prisma {
 
   export type AggregateClassification = {
     _count: ClassificationCountAggregateOutputType | null
-    _avg: ClassificationAvgAggregateOutputType | null
-    _sum: ClassificationSumAggregateOutputType | null
     _min: ClassificationMinAggregateOutputType | null
     _max: ClassificationMaxAggregateOutputType | null
   }
 
-  export type ClassificationAvgAggregateOutputType = {
-    id: number | null
-  }
-
-  export type ClassificationSumAggregateOutputType = {
-    id: number | null
-  }
-
   export type ClassificationMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     question: string | null
     response: string | null
     createdAt: Date | null
   }
 
   export type ClassificationMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     question: string | null
     response: string | null
     createdAt: Date | null
@@ -911,14 +855,6 @@ export namespace Prisma {
     _all: number
   }
 
-
-  export type ClassificationAvgAggregateInputType = {
-    id?: true
-  }
-
-  export type ClassificationSumAggregateInputType = {
-    id?: true
-  }
 
   export type ClassificationMinAggregateInputType = {
     id?: true
@@ -980,18 +916,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: ClassificationAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: ClassificationSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: ClassificationMinAggregateInputType
@@ -1022,20 +946,16 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ClassificationCountAggregateInputType | true
-    _avg?: ClassificationAvgAggregateInputType
-    _sum?: ClassificationSumAggregateInputType
     _min?: ClassificationMinAggregateInputType
     _max?: ClassificationMaxAggregateInputType
   }
 
   export type ClassificationGroupByOutputType = {
-    id: number
+    id: string
     question: string
     response: string
     createdAt: Date
     _count: ClassificationCountAggregateOutputType | null
-    _avg: ClassificationAvgAggregateOutputType | null
-    _sum: ClassificationSumAggregateOutputType | null
     _min: ClassificationMinAggregateOutputType | null
     _max: ClassificationMaxAggregateOutputType | null
   }
@@ -1061,19 +981,7 @@ export namespace Prisma {
     createdAt?: boolean
   }, ExtArgs["result"]["classification"]>
 
-  export type ClassificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    question?: boolean
-    response?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["classification"]>
 
-  export type ClassificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    question?: boolean
-    response?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["classification"]>
 
   export type ClassificationSelectScalar = {
     id?: boolean
@@ -1088,7 +996,7 @@ export namespace Prisma {
     name: "Classification"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       question: string
       response: string
       createdAt: Date
@@ -1210,30 +1118,6 @@ export namespace Prisma {
     createMany<T extends ClassificationCreateManyArgs>(args?: SelectSubset<T, ClassificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create many Classifications and returns the data saved in the database.
-     * @param {ClassificationCreateManyAndReturnArgs} args - Arguments to create many Classifications.
-     * @example
-     * // Create many Classifications
-     * const classification = await prisma.classification.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Classifications and only return the `id`
-     * const classificationWithIdOnly = await prisma.classification.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends ClassificationCreateManyAndReturnArgs>(args?: SelectSubset<T, ClassificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassificationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Delete a Classification.
      * @param {ClassificationDeleteArgs} args - Arguments to delete one Classification.
      * @example
@@ -1298,36 +1182,6 @@ export namespace Prisma {
     updateMany<T extends ClassificationUpdateManyArgs>(args: SelectSubset<T, ClassificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more Classifications and returns the data updated in the database.
-     * @param {ClassificationUpdateManyAndReturnArgs} args - Arguments to update many Classifications.
-     * @example
-     * // Update many Classifications
-     * const classification = await prisma.classification.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Classifications and only return the `id`
-     * const classificationWithIdOnly = await prisma.classification.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends ClassificationUpdateManyAndReturnArgs>(args: SelectSubset<T, ClassificationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClassificationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
      * Create or update one Classification.
      * @param {ClassificationUpsertArgs} args - Arguments to update or create a Classification.
      * @example
@@ -1345,6 +1199,29 @@ export namespace Prisma {
      * })
      */
     upsert<T extends ClassificationUpsertArgs>(args: SelectSubset<T, ClassificationUpsertArgs<ExtArgs>>): Prisma__ClassificationClient<$Result.GetResult<Prisma.$ClassificationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Classifications that matches the filter.
+     * @param {ClassificationFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const classification = await prisma.classification.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: ClassificationFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Classification.
+     * @param {ClassificationAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const classification = await prisma.classification.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: ClassificationAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
 
 
     /**
@@ -1515,7 +1392,7 @@ export namespace Prisma {
    * Fields of the Classification model
    */
   interface ClassificationFieldRefs {
-    readonly id: FieldRef<"Classification", 'Int'>
+    readonly id: FieldRef<"Classification", 'String'>
     readonly question: FieldRef<"Classification", 'String'>
     readonly response: FieldRef<"Classification", 'String'>
     readonly createdAt: FieldRef<"Classification", 'DateTime'>
@@ -1727,24 +1604,6 @@ export namespace Prisma {
   }
 
   /**
-   * Classification createManyAndReturn
-   */
-  export type ClassificationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Classification
-     */
-    select?: ClassificationSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Classification
-     */
-    omit?: ClassificationOmit<ExtArgs> | null
-    /**
-     * The data used to create many Classifications.
-     */
-    data: ClassificationCreateManyInput | ClassificationCreateManyInput[]
-  }
-
-  /**
    * Classification update
    */
   export type ClassificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1770,32 +1629,6 @@ export namespace Prisma {
    * Classification updateMany
    */
   export type ClassificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Classifications.
-     */
-    data: XOR<ClassificationUpdateManyMutationInput, ClassificationUncheckedUpdateManyInput>
-    /**
-     * Filter which Classifications to update
-     */
-    where?: ClassificationWhereInput
-    /**
-     * Limit how many Classifications to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Classification updateManyAndReturn
-   */
-  export type ClassificationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Classification
-     */
-    select?: ClassificationSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Classification
-     */
-    omit?: ClassificationOmit<ExtArgs> | null
     /**
      * The data used to update Classifications.
      */
@@ -1869,6 +1702,34 @@ export namespace Prisma {
   }
 
   /**
+   * Classification findRaw
+   */
+  export type ClassificationFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Classification aggregateRaw
+   */
+  export type ClassificationAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
    * Classification without action
    */
   export type ClassificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1886,13 +1747,6 @@ export namespace Prisma {
   /**
    * Enums
    */
-
-  export const TransactionIsolationLevel: {
-    Serializable: 'Serializable'
-  };
-
-  export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
 
   export const ClassificationScalarFieldEnum: {
     id: 'id',
@@ -1912,22 +1766,30 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const QueryMode: {
+    default: 'default',
+    insensitive: 'insensitive'
+  };
+
+  export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
   /**
    * Field references
    */
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'String'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
     
 
 
   /**
-   * Reference to a field of type 'String'
+   * Reference to a field of type 'String[]'
    */
-  export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
+  export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
     
 
 
@@ -1939,9 +1801,23 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Float'
+   * Reference to a field of type 'DateTime[]'
    */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
   /**
    * Deep Input Types
@@ -1952,7 +1828,7 @@ export namespace Prisma {
     AND?: ClassificationWhereInput | ClassificationWhereInput[]
     OR?: ClassificationWhereInput[]
     NOT?: ClassificationWhereInput | ClassificationWhereInput[]
-    id?: IntFilter<"Classification"> | number
+    id?: StringFilter<"Classification"> | string
     question?: StringFilter<"Classification"> | string
     response?: StringFilter<"Classification"> | string
     createdAt?: DateTimeFilter<"Classification"> | Date | string
@@ -1966,7 +1842,7 @@ export namespace Prisma {
   }
 
   export type ClassificationWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     AND?: ClassificationWhereInput | ClassificationWhereInput[]
     OR?: ClassificationWhereInput[]
     NOT?: ClassificationWhereInput | ClassificationWhereInput[]
@@ -1981,30 +1857,29 @@ export namespace Prisma {
     response?: SortOrder
     createdAt?: SortOrder
     _count?: ClassificationCountOrderByAggregateInput
-    _avg?: ClassificationAvgOrderByAggregateInput
     _max?: ClassificationMaxOrderByAggregateInput
     _min?: ClassificationMinOrderByAggregateInput
-    _sum?: ClassificationSumOrderByAggregateInput
   }
 
   export type ClassificationScalarWhereWithAggregatesInput = {
     AND?: ClassificationScalarWhereWithAggregatesInput | ClassificationScalarWhereWithAggregatesInput[]
     OR?: ClassificationScalarWhereWithAggregatesInput[]
     NOT?: ClassificationScalarWhereWithAggregatesInput | ClassificationScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"Classification"> | number
+    id?: StringWithAggregatesFilter<"Classification"> | string
     question?: StringWithAggregatesFilter<"Classification"> | string
     response?: StringWithAggregatesFilter<"Classification"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Classification"> | Date | string
   }
 
   export type ClassificationCreateInput = {
+    id?: string
     question: string
     response: string
     createdAt?: Date | string
   }
 
   export type ClassificationUncheckedCreateInput = {
-    id?: number
+    id?: string
     question: string
     response: string
     createdAt?: Date | string
@@ -2017,14 +1892,13 @@ export namespace Prisma {
   }
 
   export type ClassificationUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
     question?: StringFieldUpdateOperationsInput | string
     response?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ClassificationCreateManyInput = {
-    id?: number
+    id?: string
     question: string
     response: string
     createdAt?: Date | string
@@ -2037,27 +1911,15 @@ export namespace Prisma {
   }
 
   export type ClassificationUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
     question?: StringFieldUpdateOperationsInput | string
     response?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -2065,13 +1927,14 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -2084,10 +1947,6 @@ export namespace Prisma {
     question?: SortOrder
     response?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type ClassificationAvgOrderByAggregateInput = {
-    id?: SortOrder
   }
 
   export type ClassificationMaxOrderByAggregateInput = {
@@ -2104,30 +1963,10 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type ClassificationSumOrderByAggregateInput = {
-    id?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -2135,6 +1974,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
     not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
@@ -2143,8 +1983,8 @@ export namespace Prisma {
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -2163,29 +2003,10 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -2198,8 +2019,8 @@ export namespace Prisma {
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
@@ -2207,37 +2028,10 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[]
-    notIn?: number[]
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[]
-    notIn?: string[]
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -2251,10 +2045,21 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
     lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>

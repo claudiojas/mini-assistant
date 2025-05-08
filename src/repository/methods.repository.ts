@@ -1,6 +1,7 @@
 import { IFindSimilarQuestion, IMethodsRepository, ISaveToDatabase } from "../interfaces/interfaces";
 import { prisma } from "../DB/prisma.config";
-import { Classification } from "@prisma/client";
+import { Classification } from "../generated/prisma/client";
+
 
 export class MethodsRepository implements IMethodsRepository {
     async saveToDatabase(data: ISaveToDatabase): Promise<Classification> {
@@ -18,7 +19,7 @@ export class MethodsRepository implements IMethodsRepository {
             },
             orderBy: {
               createdAt: 'desc',
-            },
+            },  
             take: 1,
         });
         

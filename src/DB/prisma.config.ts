@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "../generated/prisma/client";
 
 export const prisma = new PrismaClient()
 
 
-async function main() {
+async function connect() {
     try {
       const result = await prisma.$connect();
       console.log("✅ Conectado ao banco de dados com sucesso!");
@@ -14,4 +14,4 @@ async function main() {
     }
   }
   
-  main();
+  connect();

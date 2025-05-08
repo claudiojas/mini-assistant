@@ -113,10 +113,6 @@ Prisma.NullTypes = {
  * Enums
  */
 
-exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
-  Serializable: 'Serializable'
-});
-
 exports.Prisma.ClassificationScalarFieldEnum = {
   id: 'id',
   question: 'question',
@@ -127,6 +123,11 @@ exports.Prisma.ClassificationScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
 };
 
 

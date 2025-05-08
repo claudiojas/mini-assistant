@@ -10,12 +10,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")   // Banco de dados persistente local
+  provider = "mongodb"
+  url      = env("DATABASE_URL") 
 }
 
 model Classification {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   question  String
   response  String
   createdAt DateTime @default(now())
