@@ -1,4 +1,4 @@
-# Mini Assistant - Em desenvolvimento.
+# Mini Assistant.
 Mini Assistant é um projeto simples de orquestração de agentes utilizando Node.js, Express, OpenAI e MongoDB.
 Este projeto foi idealizado para fins de estudo sobre arquiteturas de sistemas multiagentes com LLMs, 
 aplicando técnicas de engenharia de prompt e otimização de chamadas externas.
