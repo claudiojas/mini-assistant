@@ -22,8 +22,9 @@ export class App {
     // Method to register middlewares and routes
     register(){
         this.app.use(cors({
-          origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
-          credentials: true
+        //   origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
+            origin: '*',
+            credentials: true
         }));
 
         this.app.use(express.json());
