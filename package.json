@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch --env-file .env src/server.ts",
-    "build": "tsc",
+    "prisma:generate": "prisma generate",
+    "build": "npm run prisma:generate && tsc && npm run copy-prisma",
+    "copy-prisma": "cp -r src/generated dist/generated", 
     "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",

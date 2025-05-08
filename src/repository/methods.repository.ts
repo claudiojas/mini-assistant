@@ -1,6 +1,6 @@
 import { IFindSimilarQuestion, IMethodsRepository, ISaveToDatabase } from "../interfaces/interfaces";
 import { prisma } from "../DB/prisma.config";
-import { Classification } from "../generated/prisma/client";
+import { Classification } from "../generated/prisma";
 
 
 export class MethodsRepository implements IMethodsRepository {
