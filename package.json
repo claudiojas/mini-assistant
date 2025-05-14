@@ -7,7 +7,7 @@
     "dev": "tsx watch --env-file .env src/server.ts",
     "prisma:generate": "prisma generate",
     "build": "npm run prisma:generate && tsc && npm run copy-prisma",
-    "copy-prisma": "cp -r src/generated dist/generated", 
+    "copy-prisma": "cp -r src/generated dist/generated",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -27,6 +27,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@google/genai": "^0.13.0",
     "@prisma/client": "^6.7.0",
     "axios": "^1.9.0",
     "cors": "^2.8.5",

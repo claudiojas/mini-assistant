@@ -1,9 +1,8 @@
 import { cachedClassifications } from "./cachedClassifications";
+import { calGeminiAgent } from "./callGROQAgent";
 import { similarityMatch } from "./similarityMatch";
 
-export const classifyTask = async (task: string): Promise<
-  'history' | 'services' | 'projects' | 'memory' | 'smalltalk' | 'tech' | 'pricing' | 'contacts' | 'other' | 'Limite de tokens atingido. Tente novamente mais tarde.'
-> => {
+export const classifyTask = async (task: string): Promise<string> => {
   const prompt = `
     Classifique a mensagem a seguir com apenas uma palavra, escolhendo entre: history, services, projects, memory, smalltalk, tech, pricing, contacts, other, Limite de tokens atingido. Tente novamente mais tarde.
   `;
@@ -15,6 +14,17 @@ export const classifyTask = async (task: string): Promise<
 
     const matched = similarityMatch(task);
     if (matched) return matched;
+
+    const promptGemini = `
+      ${prompt}
+    `
+
+    const responseGemini = await calGeminiAgent(promptGemini, prompt);
+    console.log(responseGemini)
+    console.log("esta passando por aqui")
+    if(responseGemini) {
+      return responseGemini;
+    }
 
     const response = await fetch(process.env.GROQ_API_URL || "", {
       method: 'POST',
